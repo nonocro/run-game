@@ -9,7 +9,7 @@ import (
 	"flag"
 	_ "image/png"
 	"log"
-
+	"net"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
@@ -26,11 +26,18 @@ func main() {
 
 	ebiten.SetWindowSize(screenWidth, screenHeight)
 	ebiten.SetWindowTitle("BUT2 année 2022-2023, R3.05 Programmation système")
+	
+	listener, err := net.Listen("tcp", ":8080")
+	if err != nil {
+		log.Println("listen error:", err)
+		return
+	}
+	defer listener.Close()
 
-	g := InitGame()
+	g := InitGame(listener)
 	g.getTPS = getTPS
-
-	err := ebiten.RunGame(&g)
+	
+	err = ebiten.RunGame(&g)
 	log.Print(err)
 
 }

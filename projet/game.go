@@ -13,6 +13,7 @@ import (
 	"image"
 	"log"
 	"time"
+	"net"
 
 	"github.com/hajimehoshi/ebiten/v2"
 )
@@ -25,6 +26,8 @@ type Game struct {
 	launchStep  int           // Current step in StateLaunchRun state
 	resultStep  int           // Current step in StateResult state
 	getTPS      bool          // Help for debug
+	listener    net.Listener  // La connexion
+	firstOccurence bool       //  
 }
 
 // These constants define the five possible states of the game
@@ -37,7 +40,8 @@ const (
 )
 
 // InitGame builds a new game ready for being run by ebiten
-func InitGame() (g Game) {
+func InitGame(listener  net.Listener) (g Game) {
+
 
 	// Open the png image for the runners sprites
 	img, _, err := image.Decode(bytes.NewReader(assets.RunnerImage))
@@ -63,6 +67,7 @@ func InitGame() (g Game) {
 			colorScheme:      0,
 		}
 	}
+	g.listener = listener
 
 	// Create the field
 	g.f = Field{
@@ -70,6 +75,7 @@ func InitGame() (g Game) {
 		xarrival: finish,
 		chrono:   time.Now(),
 	}
+
 
 	return g
 }

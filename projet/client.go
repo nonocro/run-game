@@ -1,16 +1,16 @@
 package main
-
+/*
 import (
 	"bufio"
 	"fmt"
 	"log"
 	"net"
 	"os"
+	//"strconv"
 )
 
 func main() {
-
-	conn, err := net.Dial("tcp", "172.21.65.56:8080")
+	conn, err := net.Dial("tcp", os.Args[1]+":8080")
 	if err != nil {
 		log.Println("Dial error:", err)
 		return
@@ -28,3 +28,4 @@ func main() {
 	}
 
 }
+*/

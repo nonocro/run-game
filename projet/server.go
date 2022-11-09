@@ -7,7 +7,7 @@ import (
 	"net"
 )
 
-func main() {
+func server() {
 	listener, err := net.Listen("tcp", ":8080")
 	if err != nil {
 		log.Println("listen error:", err)
@@ -33,7 +33,7 @@ func main() {
 	for i:=0;i<4;i++{
 		fmt.Fprintf(connexion[i],"4 joueurs sont connectés"+"\n")
 	}
-
+	/*
 	var i = 0
 	for {
 		message, _ := bufio.NewReader(connexion[i%4]).ReadString('\n')
@@ -41,5 +41,7 @@ func main() {
 		fmt.Fprintf(connexion[i%4],message+"\n")
 		i++
 	}
+	*/
 	
 }
+
