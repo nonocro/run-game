@@ -1,7 +1,7 @@
 package main
 
 import (
-	//"bufio"
+	"bufio"
 	"fmt"
 	"log"
 	"net"
@@ -39,7 +39,14 @@ func main()  {
 	}
 
 	for {
-
+		for i:=0;i<4;i++{
+			message, _ := bufio.NewReader(connexion[i]).ReadString('\n')
+			if len(message)==1{
+				break
+			}
+			fmt.Print("Message Reçu", message)
+			fmt.Fprintf(connexion[i], message+"\n")
+		}
 	}
 }
 
