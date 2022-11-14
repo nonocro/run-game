@@ -30,7 +30,6 @@ import (
 // start the game
 func (g *Game) HandleWelcomeScreen() bool {
 	
-	
 	return inpututil.IsKeyJustPressed(ebiten.KeySpace) && g.done
 }
 
@@ -116,6 +115,12 @@ func (g *Game) HandleResults() bool {
 // Depending of the current state of the game it calls the above utilitary
 // function and then it may update the state of the game
 func (g *Game) Update() error {
+	/*if g.done {
+		message, _ := bufio.NewReader(g.connexion[i%4]).ReadString('\n')
+		fmt.Print("Message Reçu", message)
+		fmt.Fprintf(connexion[i%4],message+"\n")
+		i++
+	}*/
 	switch g.state {
 	case StateWelcomeScreen:
 		done := g.HandleWelcomeScreen()

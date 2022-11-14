@@ -28,6 +28,7 @@ type Game struct {
 	getTPS      bool          // Help for debug
 	listener    net.Listener  // La connexion
     done        bool 
+	connexion   []net.Conn    // List of connected 
 }
 
 // These constants define the five possible states of the game
@@ -40,7 +41,7 @@ const (
 )
 
 // InitGame builds a new game ready for being run by ebiten
-func InitGame(listener  net.Listener) (g Game) {
+func InitGame() (g Game) {
 
 	g.done = false
 	// Open the png image for the runners sprites
@@ -66,7 +67,7 @@ func InitGame(listener  net.Listener) (g Game) {
 			colorScheme:      0,
 		}
 	}
-	g.listener = listener
+	
 	
 
 	// Create the field
