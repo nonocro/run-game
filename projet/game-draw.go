@@ -23,7 +23,6 @@ import (
 
 // DrawWelcomeScreen displays the title screen in the game window
 func (g *Game) DrawWelcomeScreen(screen *ebiten.Image) {
-	g.firstOccurence = false
 	ebitenutil.DebugPrintAt(
 		screen,
 		fmt.Sprint("Track & Field: BUT2 2022-2023 Edition"),

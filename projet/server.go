@@ -5,35 +5,35 @@ import (
 	"fmt"
 	"log"
 	"net"
+	//"sync"
 )
 
-func server() {
-	listener, err := net.Listen("tcp", ":8080")
-	if err != nil {
-		log.Println("listen error:", err)
-		return
-	}
-	defer listener.Close()
+func (g *Game)server()  {
 
+	
 	var connexion []net.Conn
 	compt := 0
 
 	for compt<4{
-		conn, err := listener.Accept()
+		conn, err := g.listener.Accept()
 		connexion = append(connexion,conn)
 		if err != nil {
 			log.Println("accept error:", err)
-			return
+			return 
 		}
 		defer conn.Close()
 		log.Println("Un client s'est connecté")
 		compt++
 	}
+	g.done = true
+	log.Println("ok")
+	
+	
 	log.Println("4 personnes sont connectées")
 	for i:=0;i<4;i++{
 		fmt.Fprintf(connexion[i],"4 joueurs sont connectés"+"\n")
 	}
-	/*
+	
 	var i = 0
 	for {
 		message, _ := bufio.NewReader(connexion[i%4]).ReadString('\n')
@@ -41,7 +41,7 @@ func server() {
 		fmt.Fprintf(connexion[i%4],message+"\n")
 		i++
 	}
-	*/
+	
 	
 }
 

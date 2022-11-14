@@ -17,35 +17,21 @@ package main
 
 import (
 	"time"
-	"fmt"
+	//"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
-	"net"
-	"log"
+	//"net"
+	//"log"
+	//"sync"
 
 )
 
 // HandleWelcomeScreen waits for the player to push SPACE in order to
 // start the game
-func (g *Game) HandleWelcomeScreen(listener net.Listener) bool {
-	if g.firstOccurence{
-		fmt.Println(1)
-		return false
-	}
-	var connexion []net.Conn
-	compt := 0
-	for compt<4{
-		conn, err := listener.Accept()
-		connexion = append(connexion,conn)
-		if err != nil {
-			log.Println("accept error:", err)
-			return false
-		}
-		defer conn.Close()
-		log.Println("Un client s'est connecté")
-		compt++
-	}
-	return inpututil.IsKeyJustPressed(ebiten.KeySpace)
+func (g *Game) HandleWelcomeScreen() bool {
+	
+	
+	return inpututil.IsKeyJustPressed(ebiten.KeySpace) && g.done
 }
 
 // ChooseRunners loops over all the runners to check which sprite each
@@ -132,7 +118,7 @@ func (g *Game) HandleResults() bool {
 func (g *Game) Update() error {
 	switch g.state {
 	case StateWelcomeScreen:
-		done := g.HandleWelcomeScreen(g.listener)
+		done := g.HandleWelcomeScreen()
 		if done {
 			g.state++
 		}

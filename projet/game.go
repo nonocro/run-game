@@ -27,7 +27,7 @@ type Game struct {
 	resultStep  int           // Current step in StateResult state
 	getTPS      bool          // Help for debug
 	listener    net.Listener  // La connexion
-	firstOccurence bool       //  
+    done        bool 
 }
 
 // These constants define the five possible states of the game
@@ -42,14 +42,13 @@ const (
 // InitGame builds a new game ready for being run by ebiten
 func InitGame(listener  net.Listener) (g Game) {
 
-
+	g.done = false
 	// Open the png image for the runners sprites
 	img, _, err := image.Decode(bytes.NewReader(assets.RunnerImage))
 	if err != nil {
 		log.Fatal(err)
 	}
 	g.runnerImage = ebiten.NewImageFromImage(img)
-
 	// Define game parameters
 	start := 50.0
 	finish := float64(screenWidth - 50)
@@ -68,6 +67,7 @@ func InitGame(listener  net.Listener) (g Game) {
 		}
 	}
 	g.listener = listener
+	
 
 	// Create the field
 	g.f = Field{

@@ -33,11 +33,11 @@ func main() {
 		return
 	}
 	defer listener.Close()
-
 	g := InitGame(listener)
 	g.getTPS = getTPS
-	
+	go g.server()
 	err = ebiten.RunGame(&g)
+	
 	log.Print(err)
 
 }
