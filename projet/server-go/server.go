@@ -6,6 +6,7 @@ import (
 	"log"
 	"net"
 	//"sync"
+	"strconv"
 )
 
 func main()  {
@@ -28,16 +29,18 @@ func main()  {
 		}
 		defer conn.Close()
 		log.Println("Un client s'est connecté")
+		runnerNumber := compt
+		fmt.Fprintf(conn,strconv.Itoa(runnerNumber))
 		compt++
 	}
 	log.Println("ok")
 	
-	
-	log.Println("4 personnes sont connectées")
+	/*
+	log.Println("4 joueurs sont connectés")
 	for i:=0;i<4;i++{
 		fmt.Fprintf(connexion[i],"4 joueurs sont connectés"+"\n")
 	}
-
+	*/
 	for {
 		for i:=0;i<4;i++{
 			message, _ := bufio.NewReader(connexion[i]).ReadString('\n')

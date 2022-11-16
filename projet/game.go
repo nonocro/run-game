@@ -13,7 +13,7 @@ import (
 	"image"
 	"log"
 	"time"
-	"net"
+	//"net"
 
 	"github.com/hajimehoshi/ebiten/v2"
 )
@@ -26,9 +26,8 @@ type Game struct {
 	launchStep  int           // Current step in StateLaunchRun state
 	resultStep  int           // Current step in StateResult state
 	getTPS      bool          // Help for debug
-	listener    net.Listener  // La connexion
-    done        bool 
-	connexion   []net.Conn    // List of connected 
+    done        bool          // If the 4 player are connect     
+	MyRunner    int           // The number of your player
 }
 
 // These constants define the five possible states of the game
