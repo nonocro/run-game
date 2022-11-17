@@ -37,17 +37,17 @@ func main()  {
 	compt = 0
 	
 	log.Println("4 personnes sont connectées")
+
 	for i:=0;i<4;i++{
 		fmt.Fprintf(connexion[i],"4 joueurs sont connectés"+"\n")
 
 	}
-
+	
 	for {
 		for compt<4{
 			for i:=0;i<4;i++{
 				message, _ := readers[i].ReadString('\n')
 				log.Println(message)
-				fmt.Fprintf(connexion[i], message+"\n")
 				compt+=1
 			}
 			log.Println("tous les joueur sont pret !!!!")

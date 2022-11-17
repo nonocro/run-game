@@ -29,6 +29,7 @@ type Game struct {
 	conn        net.Conn      // your connexion
     done        bool 		  // if the 4 player are connected
 	myRunner    int           // number of your player
+
 }
 
 // These constants define the five possible states of the game

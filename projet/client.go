@@ -17,16 +17,14 @@ func (g *Game)client() {
 		log.Println("Dial error:", err)
 		return
 	}
-	//defer conn.Close()
 	log.Println("Je suis connecté")
-	/*
-	message, _ := bufio.NewReader(conn).ReadString('\n')
-	fmt.Print("Reponse du serveur : (reçu)" + message + "\n")
 
-*/
+
 	reader := bufio.NewReader(g.conn)
 	for {
+
 		message, _ := reader.ReadString('\n')
+
 		fmt.Print("Reponse du serveur : (reçu)" + message + "\n")
 		if strings.Contains(message,"4 joueurs sont connectés") {
 			g.done=true
