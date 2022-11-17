@@ -7,30 +7,42 @@ import (
 	"net"
 	"os"
 	"strings"
-	//"strconv"
+	"strconv"
 )
 
 func (g *Game)client() {
-	conn, err := net.Dial("tcp", os.Args[1]+":8080")
+	var err  error
+	g.conn, err = net.Dial("tcp", os.Args[1]+":8080")
 	if err != nil {
 		log.Println("Dial error:", err)
 		return
 	}
 	//defer conn.Close()
 	log.Println("Je suis connecté")
-	
+	/*
+	message, _ := bufio.NewReader(conn).ReadString('\n')
+	fmt.Print("Reponse du serveur : (reçu)" + message + "\n")
 
-
+*/
+	reader := bufio.NewReader(g.conn)
 	for {
-		reader := bufio.NewReader(os.Stdin)
-		fmt.Print("message à envoyé :")
-		text, _ := reader.ReadString('\n')
-		fmt.Fprintf(conn, text+"\n")
-		message, _ := bufio.NewReader(conn).ReadString('\n')
+		message, _ := reader.ReadString('\n')
 		fmt.Print("Reponse du serveur : (reçu)" + message + "\n")
-		if strings.Contains(message,"4 personnes sont connectées") {
+		if strings.Contains(message,"4 joueurs sont connectés") {
 			g.done=true
 		}
+
+		if strings.Contains(message,"tu est le joueur ") {
+			g.myRunner,_=strconv.Atoi(message[len(message)-2:len(message)-1])
+		}
+
+		if strings.Contains(message,"tous les joueurs sont pret") {
+			g.done=true
+		}
+		/*reader1 := bufio.NewReader(os.Stdin)
+		fmt.Print("message à envoyé :")
+		text, _ := reader.ReadString('\n')
+		fmt.Fprintf(g.conn, text+"\n")*/
 	}
 
 }

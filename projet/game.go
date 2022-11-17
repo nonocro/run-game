@@ -26,9 +26,9 @@ type Game struct {
 	launchStep  int           // Current step in StateLaunchRun state
 	resultStep  int           // Current step in StateResult state
 	getTPS      bool          // Help for debug
-	listener    net.Listener  // La connexion
-    done        bool 
-	connexion   []net.Conn    // List of connected 
+	conn        net.Conn      // your connexion
+    done        bool 		  // if the 4 player are connected
+	myRunner    int           // number of your player
 }
 
 // These constants define the five possible states of the game

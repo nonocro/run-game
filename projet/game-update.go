@@ -17,12 +17,13 @@ package main
 
 import (
 	"time"
-	//"fmt"
+	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	//"net"
 	//"log"
 	//"sync"
+	"strconv"
 
 )
 
@@ -38,7 +39,7 @@ func (g *Game) HandleWelcomeScreen() bool {
 func (g *Game) ChooseRunners() (done bool) {
 	done = true
 	for i := range g.runners {
-		if i == 0 {
+		if i == g.myRunner {
 			done = g.runners[i].ManualChoose() && done
 		} else {
 			done = g.runners[i].RandomChoose() && done
@@ -63,7 +64,7 @@ func (g *Game) HandleLaunchRun() bool {
 // UpdateRunners loops over all the runners to update each of them
 func (g *Game) UpdateRunners() {
 	for i := range g.runners {
-		if i == 0 {
+		if i == g.myRunner {
 			g.runners[i].ManualUpdate()
 		} else {
 			g.runners[i].RandomUpdate()
@@ -115,21 +116,20 @@ func (g *Game) HandleResults() bool {
 // Depending of the current state of the game it calls the above utilitary
 // function and then it may update the state of the game
 func (g *Game) Update() error {
-	/*if g.done {
-		message, _ := bufio.NewReader(g.connexion[i%4]).ReadString('\n')
-		fmt.Print("Message Reçu", message)
-		fmt.Fprintf(connexion[i%4],message+"\n")
-		i++
-	}*/
 	switch g.state {
 	case StateWelcomeScreen:
 		done := g.HandleWelcomeScreen()
 		if done {
 			g.state++
+			g.done=false
 		}
 	case StateChooseRunner:
 		done := g.ChooseRunners()
 		if done {
+			//fmt.Print("j'ai choisi mon perso")
+			fmt.Fprintf(g.conn,"Joueur "+strconv.Itoa(g.myRunner)+" à choisi son perso"+"\n")
+		}
+		if done && g.done{
 			g.UpdateAnimation()
 			g.state++
 		}

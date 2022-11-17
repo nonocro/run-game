@@ -6,47 +6,58 @@ import (
 	"log"
 	"net"
 	//"sync"
+	"strconv"
 )
 
 func main()  {
-
 
 	listener, err := net.Listen("tcp", ":8080")
 	if err != nil {
 		log.Println("listen error:", err)
 		return
 	}
+
 	var connexion []net.Conn
-	compt := 0
+	var readers  []*bufio.Reader
+	var compt int = 0
 
 	for compt<4{
 		conn, err := listener.Accept()
-		connexion = append(connexion,conn)
 		if err != nil {
 			log.Println("accept error:", err)
 			return 
 		}
 		defer conn.Close()
+		connexion = append(connexion,conn)
+		readers = append(readers,bufio.NewReader(conn))
 		log.Println("Un client s'est connecté")
+		fmt.Fprintf(conn,"tu est le joueur "+strconv.Itoa(compt)+"\n")
 		compt++
 	}
-	log.Println("ok")
-	
+	compt = 0
 	
 	log.Println("4 personnes sont connectées")
 	for i:=0;i<4;i++{
 		fmt.Fprintf(connexion[i],"4 joueurs sont connectés"+"\n")
+
 	}
 
 	for {
-		for i:=0;i<4;i++{
-			message, _ := bufio.NewReader(connexion[i]).ReadString('\n')
-			if len(message)==1{
-				break
+		for compt<4{
+			for i:=0;i<4;i++{
+				message, _ := readers[i].ReadString('\n')
+				log.Println(message)
+				fmt.Fprintf(connexion[i], message+"\n")
+				compt+=1
 			}
-			fmt.Print("Message Reçu", message)
-			fmt.Fprintf(connexion[i], message+"\n")
+			log.Println("tous les joueur sont pret !!!!")
+			for i:=0;i<4;i++{
+				fmt.Fprintf(connexion[i],"tous les joueurs sont pret"+"\n")		
+			}
 		}
+		
+
+		
 	}
 }
 
