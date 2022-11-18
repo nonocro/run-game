@@ -7,7 +7,10 @@ import (
 	"net"
 	//"sync"
 	"strconv"
+	"sync"
 )
+
+var w sync.WaitGroup
 
 func main()  {
 
@@ -45,19 +48,21 @@ func main()  {
 	
 	for {
 		for compt<4{
+			w.Add(4)
 			for i:=0;i<4;i++{
-				message, _ := readers[i].ReadString('\n')
-				log.Println(message)
-				compt+=1
+				go message_choix(readers[i])
 			}
+			w.Wait()
 			log.Println("tous les joueur sont pret !!!!")
 			for i:=0;i<4;i++{
 				fmt.Fprintf(connexion[i],"tous les joueurs sont pret"+"\n")		
 			}
 		}
-		
-
-		
 	}
 }
 
+func message_choix(reader *bufio.Reader){
+	message, _ := reader.ReadString('\n')
+	log.Println(message)
+	w.Done()
+}
