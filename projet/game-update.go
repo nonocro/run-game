@@ -77,7 +77,7 @@ func (g *Game) CheckArrival() (finished bool) {
 	finished = true
 	for i := range g.runners {
 		if (i == g.myRunner && g.runners[i].arrived){
-			fmt.Fprintf(g.conn,"Joueur "+strconv.Itoa(g.myRunner)+"est arrive en "+strconv.Itoa(int(g.runners[i].runTime))+"\n")
+			fmt.Fprintf(g.conn,strconv.Itoa(g.myRunner)+":r"+strconv.Itoa(int(g.runners[i].runTime))+"\n")
 		}
 		g.runners[i].CheckArrival(&g.f)
 		finished = finished && g.runners[i].arrived

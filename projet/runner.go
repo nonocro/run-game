@@ -45,7 +45,8 @@ type Runner struct {
 // ManualUpdate allows to use the keyboard in order to control a runner
 // when the game is in the StateRun state (i.e. during a run)
 func (r *Runner) ManualUpdate() {
-	r.UpdateSpeed(inpututil.IsKeyJustPressed(ebiten.KeySpace))
+	//r.UpdateSpeed(inpututil.IsKeyJustPressed(ebiten.KeySpace))
+	r.UpdateSpeed(rand.Intn(3) == 0)
 	r.UpdatePos()
 }
 
