@@ -11,6 +11,7 @@ import (
 )
 
 var w sync.WaitGroup
+var w2 sync.WaitGroup
 
 func main()  {
 
@@ -52,10 +53,23 @@ func main()  {
 			for i:=0;i<4;i++{
 				go message_choix(readers[i])
 			}
+			compt =4
 			w.Wait()
 			log.Println("tous les joueur sont pret !!!!")
 			for i:=0;i<4;i++{
 				fmt.Fprintf(connexion[i],"tous les joueurs sont pret"+"\n")		
+			}
+		}
+		for compt<8{
+			w2.Add(4)
+			for i:=0;i<4;i++{
+				go message_resultat(readers[i])
+			}
+			compt =8
+			w2.Wait()
+			log.Println("tous les joueur sont arrivés !!!!")
+			for i:=0;i<4;i++{
+				fmt.Fprintf(connexion[i],"tous les joueurs sont arrivés"+"\n")		
 			}
 		}
 	}
@@ -65,4 +79,11 @@ func message_choix(reader *bufio.Reader){
 	message, _ := reader.ReadString('\n')
 	log.Println(message)
 	w.Done()
+}
+
+
+func message_resultat(reader *bufio.Reader){
+	message, _ := reader.ReadString('\n')
+	log.Println(message)
+	w2.Done()
 }

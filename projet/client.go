@@ -37,6 +37,10 @@ func (g *Game)client() {
 		if strings.Contains(message,"tous les joueurs sont pret") {
 			g.done=true
 		}
+
+		if strings.Contains(message,"tous les joueurs sont arrivés") {
+			g.done=true
+		}
 		/*reader1 := bufio.NewReader(os.Stdin)
 		fmt.Print("message à envoyé :")
 		text, _ := reader.ReadString('\n')

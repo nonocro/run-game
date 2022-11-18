@@ -76,6 +76,9 @@ func (g *Game) UpdateRunners() {
 func (g *Game) CheckArrival() (finished bool) {
 	finished = true
 	for i := range g.runners {
+		if (i == g.myRunner && g.runners[i].arrived){
+			fmt.Fprintf(g.conn,"Joueur "+strconv.Itoa(g.myRunner)+"est arrive en "+strconv.Itoa(int(g.runners[i].runTime))+"\n")
+		}
 		g.runners[i].CheckArrival(&g.f)
 		finished = finished && g.runners[i].arrived
 	}
@@ -126,10 +129,10 @@ func (g *Game) Update() error {
 	case StateChooseRunner:
 		done := g.ChooseRunners()
 		if done {
-			//fmt.Print("j'ai choisi mon perso")
 			fmt.Fprintf(g.conn,"Joueur "+strconv.Itoa(g.myRunner)+" à choisi son perso"+"\n")
 		}
 		if done && g.done{
+			g.done = false
 			g.UpdateAnimation()
 			g.state++
 		}
@@ -142,7 +145,7 @@ func (g *Game) Update() error {
 		g.UpdateRunners()
 		finished := g.CheckArrival()
 		g.UpdateAnimation()
-		if finished {
+		if finished && g.done {
 			g.state++
 		}
 	case StateResult:
