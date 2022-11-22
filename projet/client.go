@@ -8,6 +8,7 @@ import (
 	"os"
 	"strings"
 	"strconv"
+	"time"
 )
 
 func (g *Game)client() {
@@ -38,7 +39,16 @@ func (g *Game)client() {
 			g.done=true
 		}
 
-		if strings.Contains(message,"tous les joueurs sont arrivés") {
+		if strings.Contains(message,":r") {
+			message = message[2:]
+			temps := strings.Split(message,",")
+			
+			for nb,runner := range g.runners {
+				tempsJoueur,_ :=strconv.Atoi(temps[nb])
+				log.Println(runner.runTime)
+				runner.runTime=time.Duration(tempsJoueur)
+				log.Println(runner.runTime)
+			}
 			g.done=true
 		}
 		/*reader1 := bufio.NewReader(os.Stdin)

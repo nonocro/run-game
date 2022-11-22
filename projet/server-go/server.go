@@ -63,7 +63,7 @@ func main()  {
 		}
 		
 		for compt<8{
-			var result []int = make([]int,4)
+			var result []string = make([]string,4)
 			w2.Add(4)
 			for i:=0;i<4;i++{
 				go message_resultat(readers[i],result)
@@ -73,7 +73,7 @@ func main()  {
 			log.Println(result)
 			log.Println("tous les joueur sont arrivés !!!!")
 			for i:=0;i<4;i++{
-				fmt.Fprintf(connexion[i],"tous les joueurs sont arrivés"+"\n")		
+				fmt.Fprintf(connexion[i],":r"+strings.Join(result,",")+"\n")		
 			}
 		}
 	}
@@ -86,16 +86,15 @@ func message_choix(reader *bufio.Reader){
 }
 
 
-func message_resultat(reader *bufio.Reader, result []int){
+func message_resultat(reader *bufio.Reader, result []string){
 	message, _ := reader.ReadString('\n')
 	for !strings.Contains(message,":r"){
 		message,_ =reader.ReadString('\n')	
 	}
-	fmt.Println(message[:1])
-	fmt.Println(strconv.Atoi(message[3:]))
+	
 	var indice int
 	indice,_ = strconv.Atoi(message[:1])
-	result[indice],_ = strconv.Atoi(message[3:len(message)-1])
+	result[indice] = message[3:len(message)-1]
 	log.Println(message)
 	w2.Done()
 }
