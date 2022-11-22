@@ -13,6 +13,7 @@ import (
 
 var w sync.WaitGroup
 var w2 sync.WaitGroup
+var w3 sync.WaitGroup
 
 func main()  {
 
@@ -76,6 +77,20 @@ func main()  {
 				fmt.Fprintf(connexion[i],":r"+strings.Join(result,",")+"\n")		
 			}
 		}
+
+		for compt<12{
+			w3.Add(4)
+			for i:=0;i<4;i++{
+				go message_reset(readers[i])
+			}
+			compt =12
+			w3.Wait()
+			log.Println("tous les joueurs veulent recommencer !!!!")
+			for i:=0;i<4;i++{
+				fmt.Fprintf(connexion[i],":again"+"\n")		
+			}
+		}
+		compt = 4
 	}
 }
 
@@ -85,6 +100,14 @@ func message_choix(reader *bufio.Reader){
 	w.Done()
 }
 
+func message_reset(reader *bufio.Reader){
+	message, _ := reader.ReadString('\n')
+	for !strings.Contains(message,"recommencer"){
+		message,_ =reader.ReadString('\n')	
+	}
+	log.Println(message)
+	w3.Done()
+}
 
 func message_resultat(reader *bufio.Reader, result []string){
 	message, _ := reader.ReadString('\n')
@@ -98,3 +121,5 @@ func message_resultat(reader *bufio.Reader, result []string){
 	log.Println(message)
 	w2.Done()
 }
+
+

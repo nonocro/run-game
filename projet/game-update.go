@@ -147,10 +147,15 @@ func (g *Game) Update() error {
 		g.UpdateAnimation()
 		if finished && g.done {
 			g.state++
+			g.done=false
 		}
 	case StateResult:
 		done := g.HandleResults()
-		if done {
+		if done{
+			fmt.Fprintf(g.conn,"Joueur "+strconv.Itoa(g.myRunner)+" veut recommencer"+"\n")
+		}
+		for done && !g.done{}
+		if done && g.done {
 			g.Reset()
 			g.state = StateLaunchRun
 		}

@@ -40,15 +40,16 @@ func (g *Game)client() {
 		}
 
 		if strings.Contains(message,":r") {
-			message = message[2:]
+			message = message[2:len(message)-1]
 			temps := strings.Split(message,",")
-			
-			for nb,runner := range g.runners {
+			for nb,_ := range g.runners {
 				tempsJoueur,_ :=strconv.Atoi(temps[nb])
-				log.Println(runner.runTime)
-				runner.runTime=time.Duration(tempsJoueur)
-				log.Println(runner.runTime)
+				g.runners[nb].runTime=time.Duration(tempsJoueur)
 			}
+			g.done=true
+		}
+
+		if strings.Contains(message,":again") {
 			g.done=true
 		}
 		/*reader1 := bufio.NewReader(os.Stdin)
