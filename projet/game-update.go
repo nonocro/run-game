@@ -158,6 +158,7 @@ func (g *Game) Update() error {
 		if done && g.done {
 			g.Reset()
 			g.state = StateLaunchRun
+			g.done = false
 		}
 	}
 	return nil
