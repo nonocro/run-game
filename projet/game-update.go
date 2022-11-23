@@ -30,7 +30,6 @@ import (
 // HandleWelcomeScreen waits for the player to push SPACE in order to
 // start the game
 func (g *Game) HandleWelcomeScreen() bool {
-	
 	return inpututil.IsKeyJustPressed(ebiten.KeySpace) && g.done
 }
 
@@ -125,6 +124,7 @@ func (g *Game) Update() error {
 		if done {
 			g.state++
 			g.done=false
+			g.nbPlayer=0
 		}
 	case StateChooseRunner:
 		done := g.ChooseRunners()
@@ -150,6 +150,7 @@ func (g *Game) Update() error {
 			g.done=false
 		}
 	case StateResult:
+		
 		done := g.HandleResults()
 		if done{
 			fmt.Fprintf(g.conn,"Joueur "+strconv.Itoa(g.myRunner)+" veut recommencer"+"\n")

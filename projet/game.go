@@ -29,7 +29,7 @@ type Game struct {
 	conn        net.Conn      // your connexion
     done        bool 		  // if the 4 player are connected
 	myRunner    int           // number of your player
-
+	nbPlayer    int           // counter of player
 }
 
 // These constants define the five possible states of the game
@@ -69,7 +69,7 @@ func InitGame() (g Game) {
 		}
 	}
 	
-	
+	g.nbPlayer = 1
 
 	// Create the field
 	g.f = Field{

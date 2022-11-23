@@ -16,7 +16,7 @@ import (
 	"fmt"
 	"image"
 	"image/color"
-
+	"strconv"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
@@ -101,6 +101,10 @@ func (g *Game) DrawResult(screen *ebiten.Image) {
 	}
 }
 
+func (g *Game)DrawConnectPlayer(screen *ebiten.Image) {
+	ebitenutil.DebugPrintAt(screen, strconv.Itoa(g.nbPlayer)+"/4 players ready", screenWidth/2-60, 10)
+}
+
 // Draw is the main drawing function of the game. It is called by ebiten at
 // each frame (60 times per second) just after calling Update (game-update.go)
 // Depending of the current state of the game it calls the above utilitary
@@ -115,6 +119,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	switch g.state {
 	case StateWelcomeScreen:
 		g.DrawWelcomeScreen(screen)
+		g.DrawConnectPlayer(screen)
 	case StateChooseRunner:
 		g.DrawSelectScreen(screen)
 	case StateLaunchRun:

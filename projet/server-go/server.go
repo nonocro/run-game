@@ -38,6 +38,9 @@ func main()  {
 		readers = append(readers,bufio.NewReader(conn))
 		log.Println("Un client s'est connecté")
 		fmt.Fprintf(conn,"tu est le joueur "+strconv.Itoa(compt)+"\n")
+		for i:=0;i<=compt;i++{
+			fmt.Fprintf(connexion[i],":c"+strconv.Itoa(compt+1)+"\n")
+		}
 		compt++
 	}
 	compt = 0

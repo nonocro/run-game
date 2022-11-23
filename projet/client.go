@@ -52,6 +52,11 @@ func (g *Game)client() {
 		if strings.Contains(message,":again") {
 			g.done=true
 		}
+
+
+		if strings.Contains(message,":c") {
+			g.nbPlayer,_ = strconv.Atoi(message[2:len(message)-1])
+		}
 		/*reader1 := bufio.NewReader(os.Stdin)
 		fmt.Print("message à envoyé :")
 		text, _ := reader.ReadString('\n')
