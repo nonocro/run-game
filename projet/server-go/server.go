@@ -37,7 +37,7 @@ func main()  {
 		defer conn.Close()
 		connection = append(connection,conn)
 		readers = append(readers,bufio.NewReader(conn))
-		log.Println("A player is connected ")
+		log.Println("player"+strconv.Itoa(count)+"is connected ")
 		fmt.Fprintf(conn,"you are the player "+strconv.Itoa(count)+"\n")
 		for i:=0;i<=count;i++{
 			fmt.Fprintf(connection[i],":c"+strconv.Itoa(count+1)+"\n")
