@@ -159,6 +159,7 @@ func (g *Game) Update() error {
 			g.state = StateLaunchRun
 			g.done = false
 			g.nbPlayer=0
+			g.resultStep = 0
 		}
 	}
 	return nil
