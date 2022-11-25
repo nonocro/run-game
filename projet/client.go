@@ -31,7 +31,7 @@ func (g *Game)client() {
 			g.done=true
 		}
 
-		if strings.Contains(message,"you are the player ") {
+		if strings.Contains(message,"you are the player") {
 			g.myRunner,_=strconv.Atoi(message[len(message)-2:len(message)-1])
 		}
 
