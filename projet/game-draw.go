@@ -90,6 +90,9 @@ func (g *Game) DrawResult(screen *ebiten.Image) {
 		}
 		ranking[rank] = i
 	}
+	if g.nbPlayer > 0{
+		g.resultStep ++
+	}
 
 	for i := 1; i < g.resultStep && i <= 4; i++ {
 		s, ms := GetSeconds(g.runners[ranking[i-1]].runTime.Milliseconds())
@@ -98,11 +101,16 @@ func (g *Game) DrawResult(screen *ebiten.Image) {
 
 	if g.resultStep > 4 {
 		ebitenutil.DebugPrintAt(screen, "Press SPACE to restart", screenWidth/2-60, 10)
+		g.DrawPlayersReady(screen)
 	}
 }
 
 func (g *Game)DrawConnectPlayer(screen *ebiten.Image) {
-	ebitenutil.DebugPrintAt(screen, strconv.Itoa(g.nbPlayer)+"/4 players ready", screenWidth/2-60, 10)
+	ebitenutil.DebugPrintAt(screen, strconv.Itoa(g.nbPlayer)+"/4 players are ready", screenWidth/2-60, 10)
+}
+
+func (g *Game) DrawPlayersReady(screen *ebiten.Image) {
+	ebitenutil.DebugPrintAt(screen, strconv.Itoa(g.nbPlayer)+"/4 players are ready", screenWidth/2+90, 10)
 }
 
 // Draw is the main drawing function of the game. It is called by ebiten at

@@ -12,11 +12,6 @@ import (
 )
 
 var w sync.WaitGroup
-
-
-
-
-
 var w2 sync.WaitGroup
 var w3 sync.WaitGroup
 
@@ -91,7 +86,7 @@ func main()  {
 		for count<12{
 			w3.Add(4)
 			for i:=0;i<4;i++{
-				go reset_message(readers[i])
+				go reset_message(readers[i],connection)
 			}
 			count =12
 			w3.Wait()
@@ -110,10 +105,13 @@ func choice_message(reader *bufio.Reader){
 	w.Done()
 }
 
-func reset_message(reader *bufio.Reader){
+func reset_message(reader *bufio.Reader, connection []net.Conn){
 	message, _ := reader.ReadString('\n')
 	for !strings.Contains(message,"restart"){
 		message,_ =reader.ReadString('\n')	
+	}
+	for _,conn := range connection{
+		fmt.Fprintf(conn,":nbplayer++"+"\n")
 	}
 	log.Println(message)
 	w3.Done()

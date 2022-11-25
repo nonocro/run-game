@@ -18,7 +18,7 @@ func (g *Game)client() {
 		log.Println("Dial error:", err)
 		return
 	}
-	log.Println("Je suis connecté")
+	log.Println("I'm connected")
 
 
 	reader := bufio.NewReader(g.conn)
@@ -41,9 +41,9 @@ func (g *Game)client() {
 
 		if strings.Contains(message,":r") {
 			message = message[2:len(message)-1]
-			time := strings.Split(message,",")
+			times := strings.Split(message,",")
 			for nb,_ := range g.runners {
-				timePlayer,_ :=strconv.Atoi(time[nb])
+				timePlayer,_ :=strconv.Atoi(times[nb])
 				g.runners[nb].runTime=time.Duration(timePlayer)
 			}
 			g.done=true
@@ -57,7 +57,14 @@ func (g *Game)client() {
 		if strings.Contains(message,":c") {
 			g.nbPlayer,_ = strconv.Atoi(message[2:len(message)-1])
 		}
-	}
 
+		if strings.Contains(message,":nbplayer") {
+			g.nbPlayer ++
+			fmt.Println(g.nbPlayer)
+			if g.nbPlayer == 4{
+				g.done = true
+			}
+		}
+	} 
 }
 

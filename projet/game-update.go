@@ -154,11 +154,11 @@ func (g *Game) Update() error {
 		if done{
 			fmt.Fprintf(g.conn,"Player "+strconv.Itoa(g.myRunner)+" want to restart"+"\n")
 		}
-		for done && !g.done{}
-		if done && g.done {
+		if g.nbPlayer==4 {
 			g.Reset()
 			g.state = StateLaunchRun
 			g.done = false
+			g.nbPlayer=0
 		}
 	}
 	return nil
