@@ -129,7 +129,7 @@ func (g *Game) Update() error {
 	case StateChooseRunner:
 		done := g.ChooseRunners()
 		if done {
-			fmt.Fprintf(g.conn,"Joueur "+strconv.Itoa(g.myRunner)+" à choisi son perso"+"\n")
+			fmt.Fprintf(g.conn,"Player "+strconv.Itoa(g.myRunner)+" choose his skin"+"\n")
 		}
 		if done && g.done{
 			g.done = false
@@ -150,10 +150,9 @@ func (g *Game) Update() error {
 			g.done=false
 		}
 	case StateResult:
-		
 		done := g.HandleResults()
 		if done{
-			fmt.Fprintf(g.conn,"Joueur "+strconv.Itoa(g.myRunner)+" veut recommencer"+"\n")
+			fmt.Fprintf(g.conn,"Player "+strconv.Itoa(g.myRunner)+" want to restart"+"\n")
 		}
 		for done && !g.done{}
 		if done && g.done {

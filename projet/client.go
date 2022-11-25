@@ -26,25 +26,25 @@ func (g *Game)client() {
 
 		message, _ := reader.ReadString('\n')
 
-		fmt.Print("Reponse du serveur : (reçu)" + message + "\n")
-		if strings.Contains(message,"4 joueurs sont connectés") {
+		fmt.Print("Server answer : (received)" + message + "\n")
+		if strings.Contains(message,"4 players are connected") {
 			g.done=true
 		}
 
-		if strings.Contains(message,"tu est le joueur ") {
+		if strings.Contains(message,"you are the player ") {
 			g.myRunner,_=strconv.Atoi(message[len(message)-2:len(message)-1])
 		}
 
-		if strings.Contains(message,"tous les joueurs sont pret") {
+		if strings.Contains(message,"All the players are ready") {
 			g.done=true
 		}
 
 		if strings.Contains(message,":r") {
 			message = message[2:len(message)-1]
-			temps := strings.Split(message,",")
+			time := strings.Split(message,",")
 			for nb,_ := range g.runners {
-				tempsJoueur,_ :=strconv.Atoi(temps[nb])
-				g.runners[nb].runTime=time.Duration(tempsJoueur)
+				timePlayer,_ :=strconv.Atoi(time[nb])
+				g.runners[nb].runTime=time.Duration(timePlayer)
 			}
 			g.done=true
 		}
@@ -57,10 +57,6 @@ func (g *Game)client() {
 		if strings.Contains(message,":c") {
 			g.nbPlayer,_ = strconv.Atoi(message[2:len(message)-1])
 		}
-		/*reader1 := bufio.NewReader(os.Stdin)
-		fmt.Print("message à envoyé :")
-		text, _ := reader.ReadString('\n')
-		fmt.Fprintf(g.conn, text+"\n")*/
 	}
 
 }
