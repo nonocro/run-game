@@ -70,7 +70,7 @@ func main()  {
 			var result []string = make([]string,4)
 			w.Add(4)
 			for i:=0;i<4;i++{
-				go result_message(readers[i],result)
+				go result_message(readers[i],result,connection)
 			}
 			
 			w.Wait()
@@ -117,9 +117,18 @@ func reset_message(reader *bufio.Reader, connection []net.Conn){
 	w.Done()
 }
 
-func result_message(reader *bufio.Reader, result []string){
+func result_message(reader *bufio.Reader, result []string, connection []net.Conn){
 	message, _ := reader.ReadString('\n')
 	for !strings.Contains(message,":r"){
+		if strings.Contains(message,":space"){
+			var numRunner int
+			for _,conn := range connection{
+				fmt.Println(message)
+				numRunner,_ = strconv.Atoi(message[6:len(message)-1])
+				fmt.Println(numRunner)
+				fmt.Fprintf(conn,":space"+strconv.Itoa(numRunner)+"\n")
+			}
+		}
 		message,_ =reader.ReadString('\n')	
 	}
 	

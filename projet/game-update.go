@@ -42,6 +42,7 @@ func (g *Game) ChooseRunners() (done bool) {
 			done = g.runners[i].ManualChoose() && done
 		} else {
 			done = g.runners[i].RandomChoose() && done
+			//done = g.runners[i].ServerChoose() && done
 		}
 	}
 	return done
@@ -64,9 +65,17 @@ func (g *Game) HandleLaunchRun() bool {
 func (g *Game) UpdateRunners() {
 	for i := range g.runners {
 		if i == g.myRunner {
-			g.runners[i].ManualUpdate()
+			if g.runners[i].ManualUpdate(){
+				fmt.Fprintf(g.conn,":space"+strconv.Itoa(g.myRunner)+"\n")
+			}
 		} else {
-			g.runners[i].RandomUpdate()
+			//g.runners[i].RandomUpdate()
+			if g.counter_space[i]{
+				g.runners[i].ServerUpdate(true)
+				g.counter_space[i] = false
+			}else{
+				g.runners[i].ServerUpdate(false)
+			}
 		}
 	}
 }
