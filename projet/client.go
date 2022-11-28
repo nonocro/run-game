@@ -25,21 +25,15 @@ func (g *Game)client() {
 	for {
 
 		message, _ := reader.ReadString('\n')
-
 		fmt.Print("Server answer : (received)" + message + "\n")
+
 		if strings.Contains(message,"4 players are connected") {
 			g.done=true
-		}
-
-		if strings.Contains(message,"you are the player") {
+		}else if strings.Contains(message,"you are the player") {
 			g.myRunner,_=strconv.Atoi(message[len(message)-2:len(message)-1])
-		}
-
-		if strings.Contains(message,"All the players are ready") {
+		}else if strings.Contains(message,"All the players are ready") {
 			g.done=true
-		}
-
-		if strings.Contains(message,":r") {
+		}else if strings.Contains(message,":r") {
 			message = message[2:len(message)-1]
 			times := strings.Split(message,",")
 			for nb,_ := range g.runners {
@@ -47,23 +41,10 @@ func (g *Game)client() {
 				g.runners[nb].runTime=time.Duration(timePlayer)
 			}
 			g.done=true
-		}
-
-		if strings.Contains(message,":again") {
-			g.done=true
-		}
-
-
-		if strings.Contains(message,":c") {
+		}else if strings.Contains(message,":c") {
 			g.nbPlayer,_ = strconv.Atoi(message[2:len(message)-1])
-		}
-
-		if strings.Contains(message,":nbplayer") {
+		}else if strings.Contains(message,":nbplayer") {
 			g.nbPlayer ++
-			fmt.Println(g.nbPlayer)
-			if g.nbPlayer == 4{
-				g.done = true
-			}
 		}
 	} 
 }

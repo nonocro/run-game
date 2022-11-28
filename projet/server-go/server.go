@@ -11,22 +11,27 @@ import (
 	"strings"
 )
 
+const (
+	StateWelcomeScreen int = iota // Title screen (iota = 0 et les autre constante sont incrémenté automatiquement de 1)
+	StateChooseRunner             // Player selection screen
+	StateRun                      // Run
+	StateResult                   // Results announcement
+)
+
 var w sync.WaitGroup
-var w2 sync.WaitGroup
-var w3 sync.WaitGroup
 
 func main()  {
+
+	var state int = StateWelcomeScreen
+	var connection []net.Conn // array of connection
+	var readers  []*bufio.Reader // array of reader for each connection
+	var count int = 0
 
 	listener, err := net.Listen("tcp", ":8080")
 	if err != nil {
 		log.Println("listen error:", err)
 		return
 	}
-
-	var connection []net.Conn // array of connection
-	var readers  []*bufio.Reader // array of reader for each connection
-
-	var count int = 0
 
 	for count<4{
 		conn, err := listener.Accept()
@@ -39,82 +44,77 @@ func main()  {
 		readers = append(readers,bufio.NewReader(conn))
 		log.Println("player"+strconv.Itoa(count)+"is connected ")
 		fmt.Fprintf(conn,"you are the player "+strconv.Itoa(count)+"\n")
-		for i:=0;i<=count;i++{
-			fmt.Fprintf(connection[i],":c"+strconv.Itoa(count+1)+"\n")
-		}
+		messageToAll(connection,":c"+strconv.Itoa(count+1))
 		count++
 	}
-	count = 0
 	
 	log.Println("4 players are connected")
+	messageToAll(connection,"4 players are connected")
+	state++
 
-	for i:=0;i<4;i++{
-		fmt.Fprintf(connection[i],"4 players are connected"+"\n")
-
-	}
-	
 	for {
-		for count<4{
+		for state == StateChooseRunner{
 			w.Add(4)
 			for i:=0;i<4;i++{
-				go choice_message(readers[i])
+				go choice_message(readers[i],connection,i)
 			}
-			count =4
+			
 			w.Wait()
 			log.Println("All the players are ready !!!!")
-			for i:=0;i<4;i++{
-				fmt.Fprintf(connection[i],"All the players are ready"+"\n")		
-			}
+			messageToAll(connection,"All the players are ready")
+			state++
 		}
 		
 
-		for count<8{
+		for state == StateRun{
 			var result []string = make([]string,4)
-			w2.Add(4)
+			w.Add(4)
 			for i:=0;i<4;i++{
 				go result_message(readers[i],result)
 			}
-			count =8
-			w2.Wait()
+			
+			w.Wait()
 			log.Println(result)
-			log.Println("All the players have arrived !!!!")
-			for i:=0;i<4;i++{
-				fmt.Fprintf(connection[i],":r"+strings.Join(result,",")+"\n")		
-			}
+			log.Println("All the players arrived !!!!")
+			messageToAll(connection,":r"+strings.Join(result,","))
+			state++
 		}
 
-		for count<12{
-			w3.Add(4)
+		for state==StateResult{
+			w.Add(4)
 			for i:=0;i<4;i++{
 				go reset_message(readers[i],connection)
 			}
-			count =12
-			w3.Wait()
+			w.Wait()
 			log.Println("All the players want to restart !!!!")
-			for i:=0;i<4;i++{
-				fmt.Fprintf(connection[i],":again"+"\n")		
-			}
+			state = StateRun
 		}
-		count = 4
+		
 	}
 }
 
-func choice_message(reader *bufio.Reader){
+
+func messageToAll(connection []net.Conn,msg string){
+	for i:=0;i<len(connection);i++{
+		fmt.Fprintf(connection[i],msg+"\n")		
+	}
+}
+
+func choice_message(reader *bufio.Reader,connection []net.Conn,nbPlayer int){
 	message, _ := reader.ReadString('\n')
 	log.Println(message)
 	w.Done()
+	
 }
 
 func reset_message(reader *bufio.Reader, connection []net.Conn){
 	message, _ := reader.ReadString('\n')
 	for !strings.Contains(message,"restart"){
-		message,_ =reader.ReadString('\n')	
+		message,_ =reader.ReadString('\n')
 	}
-	for _,conn := range connection{
-		fmt.Fprintf(conn,":nbplayer++"+"\n")
-	}
+	messageToAll(connection,":nbplayer++")
 	log.Println(message)
-	w3.Done()
+	w.Done()
 }
 
 func result_message(reader *bufio.Reader, result []string){
@@ -127,7 +127,7 @@ func result_message(reader *bufio.Reader, result []string){
 	indice,_ = strconv.Atoi(message[:1])
 	result[indice] = message[3:len(message)-1]
 	log.Println(message)
-	w2.Done()
+	w.Done()
 }
 
 
