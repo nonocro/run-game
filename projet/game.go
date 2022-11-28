@@ -30,6 +30,7 @@ type Game struct {
     done        bool 		  // if the 4 player are connected
 	myRunner    int           // number of your player
 	nbPlayer    int           // counter of player
+	counter_space     []bool	    // 1 boolean for each runner that is true if the player use the space bar during the race
 }
 
 // These constants define the five possible states of the game
@@ -43,7 +44,7 @@ const (
 
 // InitGame builds a new game ready for being run by ebiten
 func InitGame() (g Game) {
-
+	g.counter_space = make([]bool,4)
 	g.done = false
 	// Open the png image for the runners sprites
 	img, _, err := image.Decode(bytes.NewReader(assets.RunnerImage))
@@ -58,10 +59,11 @@ func InitGame() (g Game) {
 
 	// Create the runners
 	for i := range g.runners {
-		interval := frameInterval //0
-		/*if i == 0 {
-			interval = frameInterval
-		}*/
+		interval := frameInterval
+		// interval := 0
+		// if i == 0 {
+		// 	interval = frameInterval
+		// }
 		g.runners[i] = Runner{
 			xpos: start, ypos: 50 + float64(i*20),
 			maxFrameInterval: interval,

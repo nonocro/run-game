@@ -45,6 +45,8 @@ func (g *Game)client() {
 			for nb,_ := range g.runners {
 				timePlayer,_ :=strconv.Atoi(times[nb])
 				g.runners[nb].runTime=time.Duration(timePlayer)
+				//we resolved the case of lost message
+				g.runners[nb].arrived = true
 			}
 			g.done=true
 		}
@@ -56,6 +58,11 @@ func (g *Game)client() {
 
 		if strings.Contains(message,":c") {
 			g.nbPlayer,_ = strconv.Atoi(message[2:len(message)-1])
+		}
+
+		if strings.Contains(message,":space") {
+			index,_ := strconv.Atoi(message[6:len(message)-1])
+			g.counter_space[index] = true
 		}
 
 		if strings.Contains(message,":nbplayer") {
