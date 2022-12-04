@@ -17,6 +17,8 @@
 
 package main
 
+import "fmt"
+
 // ManualUpdate allows to use the keyboard in order to control a runner
 // when the game is in the StateRun state (i.e. during a run)
 func (r *Runner) ServerUpdate(b bool) {
@@ -29,6 +31,15 @@ func (r *Runner) ServerUpdate(b bool) {
 // runner when the game is in StateChooseRunner state (i.e. at player selection
 // screen)
 func (r *Runner) ServerChoose(left bool, right bool, space bool) (done bool) {
+	if left {
+		fmt.Println("left", left)
+	}
+	if right {
+		fmt.Println("right", right)
+	}
+	if space {
+		fmt.Println("space", space)
+	}
 	r.colorSelected =
 		(!r.colorSelected && space) ||
 			(r.colorSelected && !space)

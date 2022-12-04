@@ -12,25 +12,26 @@ import (
 	"course/assets"
 	"image"
 	"log"
-	"time"
 	"net"
+	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
 type Game struct {
-	state       int           // Current state of the game
-	runnerImage *ebiten.Image // Image with all the sprites of the runners
-	runners     [4]Runner     // The four runners used in the game
-	f           Field         // The running field
-	launchStep  int           // Current step in StateLaunchRun state
-	resultStep  int           // Current step in StateResult state
-	getTPS      bool          // Help for debug
-	conn        net.Conn      // your connexion
-    done        bool 		  // if the 4 player are connected
-	myRunner    int           // number of your player
-	nbPlayer    int           // counter of player
-	counter_space     []bool	    // 1 boolean for each runner that is true if the player use the space bar during the race
+	state         int           // Current state of the game
+	runnerImage   *ebiten.Image // Image with all the sprites of the runners
+	runners       [4]Runner     // The four runners used in the game
+	f             Field         // The running field
+	launchStep    int           // Current step in StateLaunchRun state
+	resultStep    int           // Current step in StateResult state
+	getTPS        bool          // Help for debug
+	conn          net.Conn      // your connexion
+	done          bool          // Used for moving the state depending of the server
+	myRunner      int           // number of your player
+	nbPlayer      int           // counter of player
+	counter_space []bool        // 1 boolean for each runner that is true if the player use the space bar during the race
+	keys_bool     [][3]bool     // For each runner, their is a tab with 3 booleans, first is for left key, second is for right and the last is for space
 }
 
 // These constants define the five possible states of the game
@@ -44,7 +45,8 @@ const (
 
 // InitGame builds a new game ready for being run by ebiten
 func InitGame() (g Game) {
-	g.counter_space = make([]bool,4)
+	g.counter_space = make([]bool, 4)
+	g.keys_bool = make([][3]bool, 4)
 	g.done = false
 	// Open the png image for the runners sprites
 	img, _, err := image.Decode(bytes.NewReader(assets.RunnerImage))
@@ -70,7 +72,7 @@ func InitGame() (g Game) {
 			colorScheme:      0,
 		}
 	}
-	
+
 	g.nbPlayer = 1
 
 	// Create the field
@@ -79,7 +81,6 @@ func InitGame() (g Game) {
 		xarrival: finish,
 		chrono:   time.Now(),
 	}
-
 
 	return g
 }
