@@ -50,6 +50,19 @@ func (g *Game)client() {
 		}else if strings.Contains(message,":space") {
 			index,_ := strconv.Atoi(message[6:len(message)-1])
 			g.counter_space[index] = true
+		}else if strings.Contains(message,":key") {
+			mouv := strings.Split(message,",")
+			player,_:= strconv.Atoi(mouv[1])
+			if player != g.myRunner{
+				if mouv[2] == "2" {
+					g.runners[player].ServerChoose(false,false,true)
+				}else if mouv[2] == "0"{
+					g.runners[player].ServerChoose(true,false,false)
+				}else if mouv[2] == "1" {
+					g.runners[player].ServerChoose(false,true,false)
+	
+				}
+			}
 		}
 
 	

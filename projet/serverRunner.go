@@ -28,7 +28,7 @@ func (r *Runner) ServerUpdate(b bool) {
 // ManualChoose allows to use the keyboard for selecting the appearance of a
 // runner when the game is in StateChooseRunner state (i.e. at player selection
 // screen)
-func (r *Runner) ServerChoose(left bool, right bool, space bool) (done bool) {
+func (r *Runner) ServerChoose(right bool, left bool, space bool) (done bool) {
 	r.colorSelected =
 		(!r.colorSelected && space) ||
 			(r.colorSelected && !space)
