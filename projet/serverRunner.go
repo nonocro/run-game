@@ -17,6 +17,8 @@
 
 package main
 
+import "fmt"
+
 // ManualUpdate allows to use the keyboard in order to control a runner
 // when the game is in the StateRun state (i.e. during a run)
 func (r *Runner) ServerUpdate(b bool) {
@@ -28,6 +30,7 @@ func (r *Runner) ServerUpdate(b bool) {
 // ManualChoose allows to use the keyboard for selecting the appearance of a
 // runner when the game is in StateChooseRunner state (i.e. at player selection
 // screen)
+
 func (r *Runner) ServerChoose(right bool, left bool, space bool) (done bool) {
 	r.colorSelected =
 		(!r.colorSelected && space) ||
