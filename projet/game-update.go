@@ -42,13 +42,9 @@ func (g *Game) ChooseRunners() (done bool) {
 		if i == g.myRunner {
 			fmt.Fprintf(g.conn, ":select,"+strconv.FormatBool(inpututil.IsKeyJustPressed(ebiten.KeyLeft))+","+strconv.FormatBool(inpututil.IsKeyJustPressed(ebiten.KeyRight))+","+strconv.FormatBool(inpututil.IsKeyJustPressed(ebiten.KeySpace))+",\n")
 			done = g.runners[i].ManualChoose() && done
-			myRunner := strconv.Itoa(g.myRunner)
-			if inpututil.IsKeyJustPressed(ebiten.KeyRight)|| inpututil.IsKeyJustPressed(ebiten.KeyLeft) || done {
-				fmt.Fprintf(g.conn,":key"+","+myRunner+","+strconv.FormatBool(inpututil.IsKeyJustPressed(ebiten.KeyRight))+","+strconv.FormatBool(inpututil.IsKeyJustPressed(ebiten.KeyLeft))+","+strconv.FormatBool(done)+","+"\n")
-			}
 		} else {
-			// done = g.runners[i].RandomChoose() && done
-			done = g.runners[i].ServerChoose(false,false,false) && done
+			done = g.runners[i].ServerChoose(g.keys_bool[i][0], g.keys_bool[i][1], g.keys_bool[i][2]) && done
+			g.keys_bool[i] = [3]bool{false, false, false}
 		}
 	}
 	return done
