@@ -20,6 +20,7 @@ package main
 import (
 	"fmt"
 	"image"
+	"image/color"
 	"math/rand"
 	"time"
 
@@ -169,5 +170,8 @@ func (r *Runner) DrawSelection(screen *ebiten.Image, xStep, playerNum int) {
 		yMod = -62
 	}
 	yPos := (screenHeight + yMod) / 2
+	if r.colorSelected {
+		ebitenutil.DrawRect(screen, float64(xPos), float64(yPos), 15, 15, color.RGBA{R: 255, G: 0, B: 0, A: 255})
+	}
 	ebitenutil.DebugPrintAt(screen, fmt.Sprint("P", playerNum), xPos, yPos)
 }

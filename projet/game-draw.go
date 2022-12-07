@@ -17,6 +17,7 @@ import (
 	"image"
 	"image/color"
 	"strconv"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
@@ -56,6 +57,9 @@ func (g *Game) DrawSelectScreen(screen *ebiten.Image) {
 		screen.DrawImage(g.runnerImage.SubImage(image.Rect(0, i*32, 32, i*32+32)).(*ebiten.Image), options)
 	}
 	for i := range g.runners {
+		if g.runners[i].colorSelected {
+
+		}
 		g.runners[i].DrawSelection(screen, xStep, i)
 	}
 }
@@ -90,8 +94,8 @@ func (g *Game) DrawResult(screen *ebiten.Image) {
 		}
 		ranking[rank] = i
 	}
-	if g.nbPlayer > 0{
-		g.resultStep ++
+	if g.nbPlayer > 0 {
+		g.resultStep++
 	}
 
 	for i := 1; i < g.resultStep && i <= 4; i++ {
@@ -105,7 +109,7 @@ func (g *Game) DrawResult(screen *ebiten.Image) {
 	}
 }
 
-func (g *Game)DrawConnectPlayer(screen *ebiten.Image) {
+func (g *Game) DrawConnectPlayer(screen *ebiten.Image) {
 	ebitenutil.DebugPrintAt(screen, strconv.Itoa(g.nbPlayer)+"/4 players are ready", screenWidth/2-60, 10)
 }
 
