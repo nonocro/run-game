@@ -42,15 +42,18 @@ func (g *Game) ChooseRunners() (done bool) {
 		if i == g.myRunner {
 			done = g.runners[i].ManualChoose() && done
 			myRunner := strconv.Itoa(g.myRunner)
-			// if g.runners[i].colorSelected{
-			// 	for _, runner := range(g.runners){
-			// 		if runner.colorSelected && runner.colorScheme == g.runners[i].colorScheme && g.runners[i] != runner {
-			// 			g.runners[i].colorSelected = false
-			// 			done = false
-			// 		}
-			// 	}
-			// }
-			fmt.Fprintf(g.conn,":key"+","+myRunner+","+strconv.FormatBool(inpututil.IsKeyJustPressed(ebiten.KeyRight))+","+strconv.FormatBool(inpututil.IsKeyJustPressed(ebiten.KeyLeft))+","+strconv.FormatBool(inpututil.IsKeyJustPressed(ebiten.KeySpace))+","+"\n")
+			var selection_failed = false
+			if g.runners[i].colorSelected{
+				for _, runner := range(g.runners){
+					if runner.colorSelected && runner.colorScheme == g.runners[i].colorScheme && g.runners[i] != runner {
+						g.runners[i].colorSelected = false
+						selection_failed = true
+					}
+				}
+			}
+			if !selection_failed{
+				fmt.Fprintf(g.conn,":key"+","+myRunner+","+strconv.FormatBool(inpututil.IsKeyJustPressed(ebiten.KeyRight))+","+strconv.FormatBool(inpututil.IsKeyJustPressed(ebiten.KeyLeft))+","+strconv.FormatBool(inpututil.IsKeyJustPressed(ebiten.KeySpace))+","+"\n")
+			}
 		} else {
 			// done = g.runners[i].RandomChoose() && done
 			done = g.runners[i].ServerChoose(g.keys_bool[i][0],g.keys_bool[i][1],g.keys_bool[i][2]) && done
@@ -157,6 +160,7 @@ func (g *Game) Update() error {
 		done := g.HandleLaunchRun()
 		if done {
 			g.state++
+			g.done = false
 		}
 	case StateRun:
 		g.UpdateRunners()
