@@ -102,20 +102,15 @@ func messageToAll(connection []net.Conn, msg string) {
 func choice_message(reader *bufio.Reader, connection []net.Conn, nbPlayer int) {
 
 	message, _ := reader.ReadString('\n')
-	for {
-		bools := strings.Split(message,",")
-		if bools[4]=="true" {
-			messageToAll(connection,":key"+","+bools[1]+","+"2"+",")
-			w.Done()
-			break
-		}else if bools[2]=="true"{
-			messageToAll(connection,":key"+","+bools[1]+","+"0"+",")
-		}else if bools[3]=="true"{
-			messageToAll(connection,":key"+","+bools[1]+","+"1"+",")
+	for !strings.Contains(message, ":skins"){
+		if strings.Contains(message,"true"){
+			bools := strings.Split(message,",")
+			messageToAll(connection,":key"+","+bools[1]+","+bools[2]+","+bools[3]+","+bools[4]+",")
 		}
 		message, _ = reader.ReadString('\n')
 		log.Println(message)
 	}
+	w.Done()
 }
 
 func reset_message(reader *bufio.Reader, connection []net.Conn) {

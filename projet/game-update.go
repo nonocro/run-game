@@ -42,12 +42,19 @@ func (g *Game) ChooseRunners() (done bool) {
 		if i == g.myRunner {
 			done = g.runners[i].ManualChoose() && done
 			myRunner := strconv.Itoa(g.myRunner)
-			if inpututil.IsKeyJustPressed(ebiten.KeyRight)|| inpututil.IsKeyJustPressed(ebiten.KeyLeft) || done {
-				fmt.Fprintf(g.conn,":key"+","+myRunner+","+strconv.FormatBool(inpututil.IsKeyJustPressed(ebiten.KeyRight))+","+strconv.FormatBool(inpututil.IsKeyJustPressed(ebiten.KeyLeft))+","+strconv.FormatBool(done)+","+"\n")
-			}
+			// if g.runners[i].colorSelected{
+			// 	for _, runner := range(g.runners){
+			// 		if runner.colorSelected && runner.colorScheme == g.runners[i].colorScheme && g.runners[i] != runner {
+			// 			g.runners[i].colorSelected = false
+			// 			done = false
+			// 		}
+			// 	}
+			// }
+			fmt.Fprintf(g.conn,":key"+","+myRunner+","+strconv.FormatBool(inpututil.IsKeyJustPressed(ebiten.KeyRight))+","+strconv.FormatBool(inpututil.IsKeyJustPressed(ebiten.KeyLeft))+","+strconv.FormatBool(inpututil.IsKeyJustPressed(ebiten.KeySpace))+","+"\n")
 		} else {
 			// done = g.runners[i].RandomChoose() && done
-			done = g.runners[i].ServerChoose(false,false,false) && done
+			done = g.runners[i].ServerChoose(g.keys_bool[i][0],g.keys_bool[i][1],g.keys_bool[i][2]) && done
+			g.keys_bool[i] = [3]bool{false, false, false}
 		}
 	}
 	return done

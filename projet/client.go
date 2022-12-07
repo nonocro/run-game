@@ -53,16 +53,28 @@ func (g *Game) client() {
 		}else if strings.Contains(message,":key") {
 			mouv := strings.Split(message,",")
 			player,_:= strconv.Atoi(mouv[1])
-			if player != g.myRunner{
-				if mouv[2] == "2" {
-					g.runners[player].ServerChoose(false,false,true)
-				}else if mouv[2] == "0"{
-					g.runners[player].ServerChoose(true,false,false)
-				}else if mouv[2] == "1" {
-					g.runners[player].ServerChoose(false,true,false)
+			left, _ := strconv.ParseBool(mouv[2])
+			right, _ := strconv.ParseBool(mouv[3])
+			space, _ := strconv.ParseBool(mouv[4])
+			fmt.Println("space", space, mouv[4], len(mouv[4]))
+			g.keys_bool[player] = [3]bool{left, right, space}
+			// if player != g.myRunner{
+			// 	if mouv[2] == "2" {
+			// 		g.runners[player].ServerChoose(false,false,true)
+			// 		// if g.runners[player].colorSelected{
+			// 		// 	for _, runner := range(g.runners){
+			// 		// 		if runner.colorSelected && runner.colorScheme == g.runners[player].colorScheme {
+			// 		// 			g.runners[player].colorSelected = false
+			// 		// 		}
+			// 		// 	}
+			// 		// }
+			// 	}else if mouv[2] == "0"{
+			// 		g.runners[player].ServerChoose(true,false,false)
+			// 	}else if mouv[2] == "1" {
+			// 		g.runners[player].ServerChoose(false,true,false)
 	
-				}
-			}
+			// 	}
+			// }
 		}
 
 	}
