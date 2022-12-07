@@ -18,6 +18,7 @@ func (g *Game) client() {
 		log.Println("Dial error:", err)
 		return
 	}
+	defer g.conn.Close()
 	log.Println("I'm connected")
 
 	reader := bufio.NewReader(g.conn)
@@ -46,24 +47,22 @@ func (g *Game) client() {
 			g.nbPlayer, _ = strconv.Atoi(message[2 : len(message)-1])
 		} else if strings.Contains(message, ":nbplayer") {
 			g.nbPlayer++
-		} else if strings.Contains(message, ":keys") {
-			bools := strings.Split(message, ",")
-			fmt.Println(len(bools))
-			fmt.Println("start")
-			for _, values := range bools {
-				fmt.Println(values)
-			}
-			fmt.Println("end")
-			fmt.Println(bools)
-			index, _ := strconv.Atoi(bools[1])
-			left, _ := strconv.ParseBool(bools[2])
-			right, _ := strconv.ParseBool(bools[3])
-			space, _ := strconv.ParseBool(bools[4])
-			fmt.Println("space", space, bools[4])
-			g.keys_bool[index] = [3]bool{left, right, space}
 		} else if strings.Contains(message, ":space") {
 			index, _ := strconv.Atoi(message[6 : len(message)-1])
 			g.counter_space[index] = true
+		}else if strings.Contains(message,":key") {
+			mouv := strings.Split(message,",")
+			player,_:= strconv.Atoi(mouv[1])
+			if player != g.myRunner{
+				if mouv[2] == "2" {
+					g.runners[player].ServerChoose(false,false,true)
+				}else if mouv[2] == "0"{
+					g.runners[player].ServerChoose(true,false,false)
+				}else if mouv[2] == "1" {
+					g.runners[player].ServerChoose(false,true,false)
+	
+				}
+			}
 		}
 
 	}

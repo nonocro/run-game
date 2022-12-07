@@ -41,11 +41,11 @@ func main() {
 			return
 		}
 		defer conn.Close()
-		connection = append(connection, conn)
-		readers = append(readers, bufio.NewReader(conn))
-		log.Println("player" + strconv.Itoa(count) + "is connected ")
-		fmt.Fprintf(conn, "you are the player "+strconv.Itoa(count)+"\n")
-		messageToAll(connection, ":c"+strconv.Itoa(count+1))
+		connection = append(connection,conn)
+		readers = append(readers,bufio.NewReader(conn))
+		log.Println("player "+strconv.Itoa(count)+" is connected ")
+		fmt.Fprintf(conn,"you are the player "+strconv.Itoa(count)+"\n")
+		messageToAll(connection,":c"+strconv.Itoa(count+1))
 		count++
 	}
 
@@ -102,20 +102,20 @@ func messageToAll(connection []net.Conn, msg string) {
 func choice_message(reader *bufio.Reader, connection []net.Conn, nbPlayer int) {
 
 	message, _ := reader.ReadString('\n')
-	log.Println(message)
-	for !strings.Contains(message, ":skins") {
-		message, _ = reader.ReadString('\n')
-		for index, conn := range connection {
-			if strings.Contains(message, "true") {
-				fmt.Println(message)
-				if index != nbPlayer {
-					fmt.Fprintf(conn, ":keys,"+strconv.Itoa(nbPlayer)+message[7:len(message)-1]+"\n")
-				}
-			}
+	for {
+		bools := strings.Split(message,",")
+		if bools[4]=="true" {
+			messageToAll(connection,":key"+","+bools[1]+","+"2"+",")
+			w.Done()
+			break
+		}else if bools[2]=="true"{
+			messageToAll(connection,":key"+","+bools[1]+","+"0"+",")
+		}else if bools[3]=="true"{
+			messageToAll(connection,":key"+","+bools[1]+","+"1"+",")
 		}
+		message, _ = reader.ReadString('\n')
+		log.Println(message)
 	}
-	w.Done()
-
 }
 
 func reset_message(reader *bufio.Reader, connection []net.Conn) {
