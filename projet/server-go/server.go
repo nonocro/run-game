@@ -108,7 +108,6 @@ func choice_message(reader *bufio.Reader, connection []net.Conn, nbPlayer int) {
 			messageToAll(connection,":key"+","+bools[1]+","+bools[2]+","+bools[3]+","+bools[4]+",")
 		}
 		message, _ = reader.ReadString('\n')
-		log.Println(message)
 	}
 	w.Done()
 }
@@ -129,9 +128,7 @@ func result_message(reader *bufio.Reader, result []string, connection []net.Conn
 		if strings.Contains(message, ":space") {
 			var numRunner int
 			for _, conn := range connection {
-				fmt.Println(message)
 				numRunner, _ = strconv.Atoi(message[6 : len(message)-1])
-				fmt.Println(numRunner)
 				fmt.Fprintf(conn, ":space"+strconv.Itoa(numRunner)+"\n")
 			}
 		}
