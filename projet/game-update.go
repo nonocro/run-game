@@ -31,7 +31,7 @@ import (
 // HandleWelcomeScreen waits for the player to push SPACE in order to
 // start the game
 func (g *Game) HandleWelcomeScreen() bool {
-	return inpututil.IsKeyJustPressed(ebiten.KeySpace) && g.done
+	return g.done
 }
 
 // ChooseRunners loops over all the runners to check which sprite each
