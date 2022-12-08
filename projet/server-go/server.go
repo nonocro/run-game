@@ -19,7 +19,7 @@ const (
 	StateResult                   // Results announcement
 )
 
-var w sync.WaitGroup
+var w sync.WaitGroup // use to synchronise all go-routines 
 
 func main() {
 
@@ -28,6 +28,7 @@ func main() {
 	var readers []*bufio.Reader // array of reader for each connection
 	var count int = 0
 
+	//connection reception
 	listener, err := net.Listen("tcp", ":8080")
 	if err != nil {
 		log.Println("listen error:", err)
@@ -53,7 +54,9 @@ func main() {
 	messageToAll(connection, "4 players are connected")
 	state++
 
+	//loop of listening to all clients
 	for {
+
 		for state == StateChooseRunner {
 			w.Add(4)
 			for i := 0; i < 4; i++ {
@@ -93,14 +96,15 @@ func main() {
 	}
 }
 
+//send a message to all clients
 func messageToAll(connection []net.Conn, msg string) {
 	for i := 0; i < len(connection); i++ {
 		fmt.Fprintf(connection[i], msg+"\n")
 	}
 }
 
+//manages the choice of characters of one client, it receive and send back to all the mouvement of each clients
 func choice_message(reader *bufio.Reader, connection []net.Conn, nbPlayer int) {
-
 	message, _ := reader.ReadString('\n')
 	for !strings.Contains(message, ":skins"){
 		if strings.Contains(message,"true"){
@@ -112,6 +116,7 @@ func choice_message(reader *bufio.Reader, connection []net.Conn, nbPlayer int) {
 	w.Done()
 }
 
+//manage the restart state, receive the reset message and increment the counter of each player
 func reset_message(reader *bufio.Reader, connection []net.Conn) {
 	message, _ := reader.ReadString('\n')
 	for !strings.Contains(message, "restart") {
@@ -122,6 +127,7 @@ func reset_message(reader *bufio.Reader, connection []net.Conn) {
 	w.Done()
 }
 
+//Manage the run and the results, receive the space command and send it back to all clients
 func result_message(reader *bufio.Reader, result []string, connection []net.Conn) {
 	message, _ := reader.ReadString('\n')
 	for !strings.Contains(message, ":r") {
@@ -134,10 +140,8 @@ func result_message(reader *bufio.Reader, result []string, connection []net.Conn
 		}
 		message, _ = reader.ReadString('\n')
 	}
-
-	var indice int
-	indice, _ = strconv.Atoi(message[:1])
-	result[indice] = message[3 : len(message)-1]
-	log.Println(message)
+	var index int
+	index, _ = strconv.Atoi(message[:1])
+	result[index] = message[3 : len(message)-1]
 	w.Done()
 }

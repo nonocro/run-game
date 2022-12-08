@@ -45,8 +45,8 @@ type Runner struct {
 
 // ManualUpdate allows to use the keyboard in order to control a runner
 // when the game is in the StateRun state (i.e. during a run)
+// Our Upgrade : return if the client press on space
 func (r *Runner) ManualUpdate() (b bool) {
-	//r.UpdateSpeed(inpututil.IsKeyJustPressed(ebiten.KeySpace))
 	b = inpututil.IsKeyJustPressed(ebiten.KeySpace)
 	r.UpdateSpeed(b)
 	r.UpdatePos()
@@ -158,6 +158,7 @@ func (r *Runner) Draw(screen *ebiten.Image) {
 
 // DrawSelection draws the current selection of a runner appearance for the
 // player select screen
+// Our upgrade : add a rectangle of color behind the selection overlay if the player select a color
 func (r *Runner) DrawSelection(screen *ebiten.Image, xStep, playerNum int) {
 	xMod := 32
 	if (playerNum/2)%2 == 0 {
@@ -171,7 +172,7 @@ func (r *Runner) DrawSelection(screen *ebiten.Image, xStep, playerNum int) {
 	}
 	yPos := (screenHeight + yMod) / 2
 	if r.colorSelected {
-		ebitenutil.DrawRect(screen, float64(xPos), float64(yPos), 15, 15, color.RGBA{R: 255, G: 0, B: 0, A: 255})
+		ebitenutil.DrawRect(screen, float64(xPos-1), float64(yPos), 16, 16, color.RGBA{R: 0, G: 255, B: 0, A: 255})
 	}
 	ebitenutil.DebugPrintAt(screen, fmt.Sprint("P", playerNum), xPos, yPos)
 }

@@ -45,9 +45,12 @@ const (
 
 // InitGame builds a new game ready for being run by ebiten
 func InitGame() (g Game) {
+	// Initialisation of the new attribute
 	g.counter_space = make([]bool, 4)
 	g.keys_bool = make([][3]bool, 4)
 	g.done = false
+	g.nbPlayer = 1
+	
 	// Open the png image for the runners sprites
 	img, _, err := image.Decode(bytes.NewReader(assets.RunnerImage))
 	if err != nil {
@@ -73,7 +76,7 @@ func InitGame() (g Game) {
 		}
 	}
 
-	g.nbPlayer = 1
+	
 
 	// Create the field
 	g.f = Field{

@@ -57,9 +57,6 @@ func (g *Game) DrawSelectScreen(screen *ebiten.Image) {
 		screen.DrawImage(g.runnerImage.SubImage(image.Rect(0, i*32, 32, i*32+32)).(*ebiten.Image), options)
 	}
 	for i := range g.runners {
-		if g.runners[i].colorSelected {
-
-		}
 		g.runners[i].DrawSelection(screen, xStep, i)
 	}
 }
@@ -80,6 +77,7 @@ func (g *Game) DrawRun(screen *ebiten.Image, drawChrono bool) {
 }
 
 // DrawResult displays the results of the run in the game window
+// Our upgrade : add the restart overlay (the counter)
 func (g *Game) DrawResult(screen *ebiten.Image) {
 	ranking := [4]int{-1, -1, -1, -1}
 	for i := range g.runners {
@@ -94,6 +92,7 @@ func (g *Game) DrawResult(screen *ebiten.Image) {
 		}
 		ranking[rank] = i
 	}
+	//Pass the animation of result if one player is ready
 	if g.nbPlayer > 0 {
 		g.resultStep++
 	}
@@ -109,10 +108,12 @@ func (g *Game) DrawResult(screen *ebiten.Image) {
 	}
 }
 
+// Draw the counter of connected players
 func (g *Game) DrawConnectPlayer(screen *ebiten.Image) {
 	ebitenutil.DebugPrintAt(screen, strconv.Itoa(g.nbPlayer)+"/4 players are ready", screenWidth/2-60, 10)
 }
 
+// Draw the counter of players who want to restart
 func (g *Game) DrawPlayersReady(screen *ebiten.Image) {
 	ebitenutil.DebugPrintAt(screen, strconv.Itoa(g.nbPlayer)+"/4 players are ready", screenWidth/2+90, 10)
 }
@@ -121,13 +122,14 @@ func (g *Game) DrawPlayersReady(screen *ebiten.Image) {
 // each frame (60 times per second) just after calling Update (game-update.go)
 // Depending of the current state of the game it calls the above utilitary
 // function to draw what is needed in the game window
+// Our Upgrade : Draw Client player number 
 func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{141, 200, 235, 255})
 
 	if g.getTPS {
 		ebitenutil.DebugPrint(screen, fmt.Sprint(ebiten.CurrentTPS()))
 	}
-
+	ebitenutil.DebugPrintAt(screen, "P"+strconv.Itoa(g.myRunner), 10, 10)
 	switch g.state {
 	case StateWelcomeScreen:
 		g.DrawWelcomeScreen(screen)

@@ -11,10 +11,12 @@ import (
 	"time"
 	"sync"
 )
-var m sync.Mutex
+var m sync.Mutex //use to avoid race-condition on game's attributes
 
+//manage all communication from the server and act consequently
 func (g *Game) client() {
 	var err error
+	//connect itself to the server with IP give as a parameter
 	g.conn, err = net.Dial("tcp", os.Args[1]+":8080")
 	if err != nil {
 		log.Println("Dial error:", err)
@@ -24,8 +26,9 @@ func (g *Game) client() {
 	log.Println("I'm connected")
 
 	reader := bufio.NewReader(g.conn)
-	for {
 
+	//loop of listening to the server
+	for {
 		message, _ := reader.ReadString('\n')
 		fmt.Print("Server answer : (received)" + message + "\n")
 
@@ -73,27 +76,8 @@ func (g *Game) client() {
 			left, _ := strconv.ParseBool(mouv[2])
 			right, _ := strconv.ParseBool(mouv[3])
 			space, _ := strconv.ParseBool(mouv[4])
-			fmt.Println("space", space, mouv[4], len(mouv[4]))
 			g.keys_bool[player] = [3]bool{left, right, space}
-			// if player != g.myRunner{
-			// 	if mouv[2] == "2" {
-			// 		g.runners[player].ServerChoose(false,false,true)
-			// 		// if g.runners[player].colorSelected{
-			// 		// 	for _, runner := range(g.runners){
-			// 		// 		if runner.colorSelected && runner.colorScheme == g.runners[player].colorScheme {
-			// 		// 			g.runners[player].colorSelected = false
-			// 		// 		}
-			// 		// 	}
-			// 		// }
-			// 	}else if mouv[2] == "0"{
-			// 		g.runners[player].ServerChoose(true,false,false)
-			// 	}else if mouv[2] == "1" {
-			// 		g.runners[player].ServerChoose(false,true,false)
-	
-			// 	}
-			// }
 			m.Unlock()
 		}
-
 	}
 }

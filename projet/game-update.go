@@ -18,24 +18,21 @@ package main
 import (
 	"fmt"
 	"time"
-
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
-
-	//"net"
-	//"log"
-	//"sync"
 	"strconv"
 )
 
 // HandleWelcomeScreen waits for the player to push SPACE in order to
 // start the game
+// Our Upgrade : Wait to all the client to be connected and pass automatically to the next state
 func (g *Game) HandleWelcomeScreen() bool {
 	return g.done
 }
 
 // ChooseRunners loops over all the runners to check which sprite each
 // of them selected
+// Our Upgrade : Avoid player from taking a color already selected and use our function to manage the selection of other players 
 func (g *Game) ChooseRunners() (done bool) {
 	done = true
 	for i := range g.runners {
@@ -53,10 +50,14 @@ func (g *Game) ChooseRunners() (done bool) {
 				}
 			}
 			if !selection_failed {
-				fmt.Fprintf(g.conn, ":key"+","+myRunner+","+strconv.FormatBool(inpututil.IsKeyJustPressed(ebiten.KeyRight))+","+strconv.FormatBool(inpututil.IsKeyJustPressed(ebiten.KeyLeft))+","+strconv.FormatBool(inpututil.IsKeyJustPressed(ebiten.KeySpace))+","+"\n")
+				right :=  inpututil.IsKeyJustPressed(ebiten.KeyRight)
+				left := inpututil.IsKeyJustPressed(ebiten.KeyLeft)
+				space := inpututil.IsKeyJustPressed(ebiten.KeySpace)
+				if (right || left || space) {
+					fmt.Fprintf(g.conn, ":key"+","+myRunner+","+strconv.FormatBool(right)+","+strconv.FormatBool(left)+","+strconv.FormatBool(space)+","+"\n")
+				}
 			}
 		} else {
-			// done = g.runners[i].RandomChoose() && done
 			done = g.runners[i].ServerChoose(g.keys_bool[i][0], g.keys_bool[i][1], g.keys_bool[i][2]) && done
 			g.keys_bool[i] = [3]bool{false, false, false}
 		}
@@ -78,6 +79,7 @@ func (g *Game) HandleLaunchRun() bool {
 }
 
 // UpdateRunners loops over all the runners to update each of them
+// Our upgrade : when the player press space, send it to the server, and use our function to update the other runners
 func (g *Game) UpdateRunners() {
 	for i := range g.runners {
 		if i == g.myRunner {
@@ -92,6 +94,7 @@ func (g *Game) UpdateRunners() {
 }
 
 // CheckArrival loops over all the runners to check which ones are arrived
+// Our upgrade : Throw the result of the player to the server
 func (g *Game) CheckArrival() (finished bool) {
 	finished = true
 	for i := range g.runners {
@@ -137,6 +140,7 @@ func (g *Game) HandleResults() bool {
 // at each frame (60 times per second) just before calling Draw (game-draw.go)
 // Depending of the current state of the game it calls the above utilitary
 // function and then it may update the state of the game
+// Our upgrade : We had g.done and g.nbPlayer to synchronise with the server, we also send message to the server to report player progression
 func (g *Game) Update() error {
 	switch g.state {
 	case StateWelcomeScreen:

@@ -9,7 +9,6 @@ import (
 	"flag"
 	_ "image/png"
 	"log"
-	//"net"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
@@ -32,7 +31,7 @@ func main() {
 	g := InitGame()
 	g.getTPS = getTPS
 	
-	go g.client()	
+	go g.client() // call the client as a go-routine to work along with the game 
 	err := ebiten.RunGame(&g)
 	
 	log.Print(err)
