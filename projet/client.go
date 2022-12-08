@@ -31,20 +31,20 @@ func (g *Game) client() {
 	for {
 		message, _ := reader.ReadString('\n')
 		fmt.Print("Server answer : (received)" + message + "\n")
-
-		if strings.Contains(message, "4 players are connected") {
+		// test the content of the message from server
+		if strings.Contains(message, "4 players are connected") { // received the validation when all the player are connected
 			m.Lock()
 			g.done = true
 			m.Unlock()
-		} else if strings.Contains(message, "you are the player") {
+		} else if strings.Contains(message, "you are the player") { // tell you your player number
 			m.Lock()
 			g.myRunner, _ = strconv.Atoi(message[len(message)-2 : len(message)-1])
 			m.Unlock()
-		} else if strings.Contains(message, "All the players are ready") {
+		} else if strings.Contains(message, "All the players are ready") { // received the validation when all the player choose their color 
 			m.Lock()
 			g.done = true
 			m.Unlock()
-		} else if strings.Contains(message, ":r") {
+		} else if strings.Contains(message, ":r") { // reveived all the result and mange to affect them to each runners
 			message = message[2 : len(message)-1]
 			times := strings.Split(message, ",")
 			m.Lock()
@@ -56,20 +56,20 @@ func (g *Game) client() {
 			}
 			g.done = true
 			m.Unlock()
-		} else if strings.Contains(message, ":c") {
+		} else if strings.Contains(message, ":c") { // received the number of player connected
 			m.Lock()
 			g.nbPlayer, _ = strconv.Atoi(message[2 : len(message)-1])
 			m.Unlock()
-		} else if strings.Contains(message, ":nbplayer") {
+		} else if strings.Contains(message, ":nbplayer") { // received message to update the counter of players
 			m.Lock()
 			g.nbPlayer++
 			m.Unlock()
-		} else if strings.Contains(message, ":space") {
+		} else if strings.Contains(message, ":space") { // received the input (ex :space1)) to adapt speed of each runner
 			index, _ := strconv.Atoi(message[6 : len(message)-1])
 			m.Lock()
 			g.counter_space[index] = true
 			m.Unlock()
-		}else if strings.Contains(message,":key") {
+		}else if strings.Contains(message,":key") { // received the input to manage the synchronisation of the color selection
 			mouv := strings.Split(message,",")
 			player,_:= strconv.Atoi(mouv[1])
 			m.Lock()
