@@ -34,7 +34,7 @@ func main() {
 		log.Println("listen error:", err)
 		return
 	}
-
+	//loop for player's connection
 	for count < 4 {
 		conn, err := listener.Accept()
 		if err != nil {
@@ -46,8 +46,8 @@ func main() {
 		readers = append(readers,bufio.NewReader(conn))
 		log.Println("player "+strconv.Itoa(count)+" is connected ")
 		fmt.Fprintf(conn,"you are the player "+strconv.Itoa(count)+"\n")
-		messageToAll(connection,":c"+strconv.Itoa(count+1))
 		count++
+		messageToAll(connection,":c"+strconv.Itoa(count))
 	}
 
 	log.Println("4 players are connected")
@@ -55,8 +55,9 @@ func main() {
 	state++
 
 	//loop of listening to all clients
+	//each loops will call a go-routine function to listen to each client in particular
 	for {
-
+		//loop for the choosing state until all player have choosing a character
 		for state == StateChooseRunner {
 			w.Add(4)
 			for i := 0; i < 4; i++ {
@@ -68,7 +69,7 @@ func main() {
 			messageToAll(connection, "All the players are ready")
 			state++
 		}
-
+		//loop for the running state until all player have arrived
 		for state == StateRun {
 			var result []string = make([]string, 4)
 			w.Add(4)
@@ -82,7 +83,7 @@ func main() {
 			messageToAll(connection, ":r"+strings.Join(result, ","))
 			state++
 		}
-
+		//loop for the result state until all player want to restart
 		for state == StateResult {
 			w.Add(4)
 			for i := 0; i < 4; i++ {
@@ -104,6 +105,7 @@ func messageToAll(connection []net.Conn, msg string) {
 }
 
 //manages the choice of characters of one client, it receive and send back to all the mouvement of each clients
+//end when receive ":skins" message from the clients
 func choice_message(reader *bufio.Reader, connection []net.Conn, nbPlayer int) {
 	message, _ := reader.ReadString('\n')
 	for !strings.Contains(message, ":skins"){
