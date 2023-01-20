@@ -1,34 +1,17 @@
 /*
-//  Data structure for representing the four runners
-//  used in the game. Provided with a few utilitary
-//  methods:
-//    - CheckArrival
-//    - Draw
-//    - DrawSelection
-//    - ManualChoose
-//    - ManualUpdate
-//    - RandomChoose
-//    - RandomUpdate
-//    - Reset
-//    - UpdateAnimation
-//    - UpdatePos
-//    - UpdateSpeed
+//  New file for our functions to manage other runners
 */
 
 package main
 
-// ManualUpdate allows to use the keyboard in order to control a runner
-// when the game is in the StateRun state (i.e. during a run)
+// Will update the runner in function of a boolean, it will be call with boolean receive by the server
 func (r *Runner) ServerUpdate(b bool) {
-	//r.UpdateSpeed(inpututil.IsKeyJustPressed(ebiten.KeySpace))
 	r.UpdateSpeed(b)
 	r.UpdatePos()
 }
 
-// ManualChoose allows to use the keyboard for selecting the appearance of a
-// runner when the game is in StateChooseRunner state (i.e. at player selection
-// screen)
-func (r *Runner) ServerChoose(left bool, right bool, space bool) (done bool) {
+// Manage the selection to the player en function of boolean, it will be call with booleans receive by the server
+func (r *Runner) ServerChoose(right bool, left bool, space bool) (done bool) {
 	r.colorSelected =
 		(!r.colorSelected && space) ||
 			(r.colorSelected && !space)

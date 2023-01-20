@@ -16,33 +16,50 @@
 package main
 
 import (
-	"time"
 	"fmt"
+	"time"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
-	//"net"
-	//"log"
-	//"sync"
 	"strconv"
-
 )
 
 // HandleWelcomeScreen waits for the player to push SPACE in order to
 // start the game
+// Our Upgrade : Wait to all the client to be connected and pass automatically to the next state
 func (g *Game) HandleWelcomeScreen() bool {
-	return inpututil.IsKeyJustPressed(ebiten.KeySpace) && g.done
+	return g.done
 }
 
 // ChooseRunners loops over all the runners to check which sprite each
 // of them selected
+// Our Upgrade : Avoid player from taking a color already selected and use our function to manage the selection of other players 
 func (g *Game) ChooseRunners() (done bool) {
 	done = true
 	for i := range g.runners {
 		if i == g.myRunner {
 			done = g.runners[i].ManualChoose() && done
+			myRunner := strconv.Itoa(g.myRunner)
+			var selection_failed = false
+			if g.runners[i].colorSelected {
+				for _, runner := range g.runners {
+					if runner.colorSelected && runner.colorScheme == g.runners[i].colorScheme && g.runners[i] != runner {
+						g.runners[i].colorSelected = false
+						selection_failed = true
+						done = false
+					}
+				}
+			}
+			if !selection_failed {
+				right :=  inpututil.IsKeyJustPressed(ebiten.KeyRight)
+				left := inpututil.IsKeyJustPressed(ebiten.KeyLeft)
+				space := inpututil.IsKeyJustPressed(ebiten.KeySpace)
+				if (right || left || space) {
+					fmt.Fprintf(g.conn, ":key"+","+myRunner+","+strconv.FormatBool(right)+","+strconv.FormatBool(left)+","+strconv.FormatBool(space)+","+"\n")
+				}
+			}
 		} else {
-			done = g.runners[i].RandomChoose() && done
-			//done = g.runners[i].ServerChoose() && done
+			done = g.runners[i].ServerChoose(g.keys_bool[i][0], g.keys_bool[i][1], g.keys_bool[i][2]) && done
+			g.keys_bool[i] = [3]bool{false, false, false}
 		}
 	}
 	return done
@@ -62,30 +79,27 @@ func (g *Game) HandleLaunchRun() bool {
 }
 
 // UpdateRunners loops over all the runners to update each of them
+// Our upgrade : when the player press space, send it to the server, and use our function to update the other runners
 func (g *Game) UpdateRunners() {
 	for i := range g.runners {
 		if i == g.myRunner {
-			if g.runners[i].ManualUpdate(){
-				fmt.Fprintf(g.conn,":space"+strconv.Itoa(g.myRunner)+"\n")
+			if g.runners[i].ManualUpdate() {
+				fmt.Fprintf(g.conn, ":space"+strconv.Itoa(g.myRunner)+"\n")
 			}
 		} else {
-			//g.runners[i].RandomUpdate()
-			if g.counter_space[i]{
-				g.runners[i].ServerUpdate(true)
-				g.counter_space[i] = false
-			}else{
-				g.runners[i].ServerUpdate(false)
-			}
+			g.runners[i].ServerUpdate(g.counter_space[i])
+			g.counter_space[i] = false
 		}
 	}
 }
 
 // CheckArrival loops over all the runners to check which ones are arrived
+// Our upgrade : Throw the result of the player to the server
 func (g *Game) CheckArrival() (finished bool) {
 	finished = true
 	for i := range g.runners {
-		if (i == g.myRunner && g.runners[i].arrived){
-			fmt.Fprintf(g.conn,strconv.Itoa(g.myRunner)+":r"+strconv.Itoa(int(g.runners[i].runTime))+"\n")
+		if i == g.myRunner && g.runners[i].arrived {
+			fmt.Fprintf(g.conn, strconv.Itoa(g.myRunner)+":r"+strconv.Itoa(int(g.runners[i].runTime))+"\n")
 		}
 		g.runners[i].CheckArrival(&g.f)
 		finished = finished && g.runners[i].arrived
@@ -126,21 +140,23 @@ func (g *Game) HandleResults() bool {
 // at each frame (60 times per second) just before calling Draw (game-draw.go)
 // Depending of the current state of the game it calls the above utilitary
 // function and then it may update the state of the game
+// Our upgrade : We had g.done and g.nbPlayer to synchronise with the server, we also send message to the server to report player progression
 func (g *Game) Update() error {
 	switch g.state {
 	case StateWelcomeScreen:
 		done := g.HandleWelcomeScreen()
 		if done {
 			g.state++
-			g.done=false
-			g.nbPlayer=0
+			g.done = false
+			g.nbPlayer = 0
 		}
 	case StateChooseRunner:
 		done := g.ChooseRunners()
 		if done {
-			fmt.Fprintf(g.conn,"Player "+strconv.Itoa(g.myRunner)+" choose his skin"+"\n")
+			fmt.Fprintf(g.conn, "Player "+strconv.Itoa(g.myRunner)+" choose his skin"+"\n")
 		}
-		if done && g.done{
+		if done {
+			fmt.Fprintf(g.conn, ":skins"+"\n")
 			g.done = false
 			g.UpdateAnimation()
 			g.state++
@@ -149,6 +165,7 @@ func (g *Game) Update() error {
 		done := g.HandleLaunchRun()
 		if done {
 			g.state++
+			g.done = false
 		}
 	case StateRun:
 		g.UpdateRunners()
@@ -156,18 +173,18 @@ func (g *Game) Update() error {
 		g.UpdateAnimation()
 		if finished && g.done {
 			g.state++
-			g.done=false
+			g.done = false
 		}
 	case StateResult:
 		done := g.HandleResults()
-		if done{
-			fmt.Fprintf(g.conn,"Player "+strconv.Itoa(g.myRunner)+" want to restart"+"\n")
+		if done {
+			fmt.Fprintf(g.conn, "Player "+strconv.Itoa(g.myRunner)+" want to restart"+"\n")
 		}
-		if g.nbPlayer==4 {
+		if g.nbPlayer == 4 {
 			g.Reset()
 			g.state = StateLaunchRun
 			g.done = false
-			g.nbPlayer=0
+			g.nbPlayer = 0
 			g.resultStep = 0
 		}
 	}
